@@ -97,7 +97,7 @@ services:
         - "traefik.http.services.drawio.loadbalancer.server.port=8080"
         - homepage.group=Application
         - homepage.name=Draw.io
-        - homepage.icon=drawio.png
+        - homepage.icon=diagrams-net.png
         - homepage.href=https://drawio.${DOMAIN_SWARM}:4
         - homepage.description=Draw.io绘图
         - homepage.siteMonitor=http://drawio:8080
