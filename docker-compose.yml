@@ -61,7 +61,7 @@ services:
         - "traefik.http.routers.nocodb.rule=Host(`nocodb.${DOMAIN_SWARM}`,`nocodb.${DOMAIN_EMERGENCY}`)"
         - "traefik.http.routers.nocodb.entrypoints=websecure"
         - "traefik.http.routers.nocodb.service=nocodb"
-        - "traefik.http.routers.nocodb.middlewares=authelia"
+        - "traefik.http.routers.nocodb.middlewares=auth,noauth-chain@file"
         - "traefik.http.services.nocodb.loadbalancer.server.port=8080"
         - homepage.group=Application
         - homepage.name=NocoDB
