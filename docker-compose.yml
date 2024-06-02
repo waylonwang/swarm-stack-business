@@ -42,6 +42,11 @@ services:
         constraints:
           - node.labels.type == vm
           - node.labels.application == true
+    logging:
+      driver: fluentd
+      options:
+        tag: docker.business.nocobase
+        fluentd-async-connect: "true"       
 
   # NocoDB
   nocodb:
