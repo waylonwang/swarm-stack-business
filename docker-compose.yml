@@ -59,7 +59,7 @@ services:
         - homepage.description=NocoBase低代码系统
         - homepage.siteMonitor=http://nocobase
         - homepage.weight=10
-      <<: [*deploy-common-ref,*placement-default-ref]
+      <<: [*deploy-common-ref, *placement-default-ref]
 
   # ------------------------------------------------------------
   # NocoDB无代码表单系统
@@ -94,7 +94,7 @@ services:
         - homepage.description=NocoDB多维表格
         - homepage.siteMonitor=http://nocodb:8080
         - homepage.weight=11
-      <<: [*deploy-common-ref,*placement-default-ref]
+      <<: [*deploy-common-ref, *placement-default-ref]
 
   # ------------------------------------------------------------
   # Draw.io流程图系统
@@ -127,7 +127,7 @@ services:
         - homepage.description=Draw.io绘图
         - homepage.siteMonitor=http://drawio:8080
         - homepage.weight=12
-      <<: [*deploy-common-ref,*placement-default-ref]
+      <<: [*deploy-common-ref, *placement-default-ref]
 
   # ------------------------------------------------------------
   # Start Page业务导航页
@@ -159,7 +159,7 @@ services:
         - homepage.description=startpage
         - homepage.siteMonitor=http://startpage
         - homepage.weight=30
-      <<: [*deploy-common-ref,*placement-default-ref]
+      <<: [*deploy-common-ref, *placement-default-ref]
 
 
 networks:
