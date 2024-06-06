@@ -6,6 +6,15 @@ x-defines:
   service-common: &service-common-ref
     networks: [network_cluster]
     restart: on-failure
+  env-common: &env-common-ref
+    NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1,::1}
+    TZ: ${TZ:-Asia/Shanghai}    
+  env-proxy: &env-proxy-ref
+    HTTP_PROXY: ${OPENCLASH_HTTP_PROXY}
+    HTTPS_PROXY: ${OPENCLASH_HTTP_PROXY}
+    restart_policy:
+      condition: on-failure
+      delay: 5s      
   deploy-common: &deploy-common-ref
     mode: replicated
     replicas: 1
@@ -23,11 +32,11 @@ services:
   # NocoBase无代码业务系统
   # ------------------------------------------------------------
   nocobase:
+    <<: *service-common-ref
     # image: nocobase/nocobase:0.21.0-alpha.16
     image: nocobase/nocobase:main
-    <<: *service-common-ref
     environment:
-      # 直接使用Portainer容器内的环境变量
+      <<: *env-common-ref
       DB_LOGGING: ${DB_LOGGING}
       DB_DIALECT: ${DB_DIALECT}
       DB_HOST: ${DB_HOST}
@@ -36,7 +45,6 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       LOGGER_LEVEL: ${LOGGER_LEVEL}
       LOCAL_STORAGE_BASE_URL: ${LOCAL_STORAGE_BASE_URL}
-      TZ: ${TZ}
     volumes:
       - nfs_nocobase:/app/nocobase/storage
     logging:
@@ -65,13 +73,12 @@ services:
   # NocoDB无代码表单系统
   # ------------------------------------------------------------
   nocodb:
-    image: nocodb/nocodb:latest
     <<: *service-common-ref
+    image: nocodb/nocodb:latest
     environment:
-      # 直接使用Portainer容器内的环境变量
+      <<: *env-common-ref
       NC_DB: ${NC_DB}
       NC_PUBLIC_URL: https://nocodb.${DOMAIN_SWARM}:${EXTERNAL_PORT}
-      TZ: ${TZ}
     volumes:
       - nfs_nocodb:/usr/app/data
     logging:
@@ -100,11 +107,10 @@ services:
   # Draw.io流程图系统
   # ------------------------------------------------------------
   drawio:
-    image: jgraph/drawio:latest
     <<: *service-common-ref
+    image: jgraph/drawio:latest
     environment:
-      # 直接使用Portainer容器内的环境变量
-      TZ: ${TZ}
+      <<: *env-common-ref
     volumes:
       - nfs_drawio:/usr/local/tomcat/webapps/draw/js
     logging:
@@ -133,10 +139,10 @@ services:
   # Start Page业务导航页
   # ------------------------------------------------------------
   startpage:
-    image: loganmarchione/docker-php-startpage:latest
     <<: *service-common-ref
+    image: loganmarchione/docker-php-startpage:latest
     environment:
-      TZ: ${TZ}
+      <<: *env-common-ref
     volumes:
       - nfs_startpage:/var/www/html/user_includes
     logging:
