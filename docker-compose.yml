@@ -1,16 +1,34 @@
+---
 # Update Time: 2024-2-1 21:10
 version: "3.4"
 
+x-defines:
+  service-common: &service-common-ref
+    networks: [network_cluster]
+    restart: on-failure
+  deploy-common: &deploy-common-ref
+    mode: replicated
+    replicas: 1
+  placement-default: &placement-default-ref
+    placement:
+      constraints:
+        - node.labels.type == vm
+        - node.labels.business == true
+  driver-common: &driver-common-ref
+    type: nfs
+    o: addr=${NFS_SERVER},rw,nfsvers=4
+
 services:
-  # NocoBase
+  # ------------------------------------------------------------
+  # NocoBase无代码业务系统
+  # ------------------------------------------------------------
   nocobase:
     # image: nocobase/nocobase:0.21.0-alpha.16
     image: nocobase/nocobase:main
-    networks: [network_cluster]
-    restart: on-failure
+    <<: *service-common-ref
     environment:
       # 直接使用Portainer容器内的环境变量
-      DB_LOGGING: ${DB_LOGGING}       
+      DB_LOGGING: ${DB_LOGGING}
       DB_DIALECT: ${DB_DIALECT}
       DB_HOST: ${DB_HOST}
       DB_DATABASE: ${DB_DATABASE}
@@ -21,14 +39,19 @@ services:
       TZ: ${TZ}
     volumes:
       - nfs_nocobase:/app/nocobase/storage
+    logging:
+      driver: fluentd
+      options:
+        tag: docker.business.nocobase
+        fluentd-async-connect: "true"
     deploy:
       labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.nocobase.rule=Host(`nocobase.${DOMAIN_SWARM}`,`nocobase.${DOMAIN_EMERGENCY}`)"
-        - "traefik.http.routers.nocobase.entrypoints=websecure"
-        - "traefik.http.routers.nocobase.service=nocobase"
-        - "traefik.http.routers.nocobase.middlewares=cors-headers@file,auth,normal-chain@file"
-        - "traefik.http.services.nocobase.loadbalancer.server.port=80"
+        - traefik.enable=true
+        - traefik.http.routers.nocobase.rule=Host(`nocobase.${DOMAIN_SWARM}`,`nocobase.${DOMAIN_EMERGENCY}`)
+        - traefik.http.routers.nocobase.entrypoints=websecure
+        - traefik.http.routers.nocobase.service=nocobase
+        - traefik.http.routers.nocobase.middlewares=cors-headers@file,auth,normal-chain@file
+        - traefik.http.services.nocobase.loadbalancer.server.port=80
         - homepage.group=Application
         - homepage.name=云谷之家
         - homepage.icon=https://www.waylon.wang:4/images/services/nocobase.png
@@ -36,23 +59,14 @@ services:
         - homepage.description=NocoBase低代码系统
         - homepage.siteMonitor=http://nocobase
         - homepage.weight=10
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.labels.type == vm
-          - node.labels.application == true
-    logging:
-      driver: fluentd
-      options:
-        tag: docker.business.nocobase
-        fluentd-async-connect: "true"       
+      <<: [*deploy-common-ref,*placement-default-ref]
 
-  # NocoDB
+  # ------------------------------------------------------------
+  # NocoDB无代码表单系统
+  # ------------------------------------------------------------
   nocodb:
     image: nocodb/nocodb:latest
-    networks: [network_cluster]
-    restart: on-failure
+    <<: *service-common-ref
     environment:
       # 直接使用Portainer容器内的环境变量
       NC_DB: ${NC_DB}
@@ -60,14 +74,19 @@ services:
       TZ: ${TZ}
     volumes:
       - nfs_nocodb:/usr/app/data
+    logging:
+      driver: fluentd
+      options:
+        tag: docker.business.nocodb
+        fluentd-async-connect: "true"
     deploy:
       labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.nocodb.rule=Host(`nocodb.${DOMAIN_SWARM}`,`nocodb.${DOMAIN_EMERGENCY}`)"
-        - "traefik.http.routers.nocodb.entrypoints=websecure"
-        - "traefik.http.routers.nocodb.service=nocodb"
-        - "traefik.http.routers.nocodb.middlewares=auth,normal-chain@file"
-        - "traefik.http.services.nocodb.loadbalancer.server.port=8080"
+        - traefik.enable=true
+        - traefik.http.routers.nocodb.rule=Host(`nocodb.${DOMAIN_SWARM}`,`nocodb.${DOMAIN_EMERGENCY}`)
+        - traefik.http.routers.nocodb.entrypoints=websecure
+        - traefik.http.routers.nocodb.service=nocodb
+        - traefik.http.routers.nocodb.middlewares=auth,normal-chain@file
+        - traefik.http.services.nocodb.loadbalancer.server.port=8080
         - homepage.group=Application
         - homepage.name=NocoDB
         - homepage.icon=https://www.waylon.wang:4/images/services/nocodb.png
@@ -75,31 +94,32 @@ services:
         - homepage.description=NocoDB多维表格
         - homepage.siteMonitor=http://nocodb:8080
         - homepage.weight=11
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.labels.type == vm
-          - node.labels.application == true
+      <<: [*deploy-common-ref,*placement-default-ref]
 
-  # Draw.io
+  # ------------------------------------------------------------
+  # Draw.io流程图系统
+  # ------------------------------------------------------------
   drawio:
     image: jgraph/drawio:latest
-    networks: [network_cluster]
-    restart: on-failure
+    <<: *service-common-ref
     environment:
       # 直接使用Portainer容器内的环境变量
       TZ: ${TZ}
     volumes:
       - nfs_drawio:/usr/local/tomcat/webapps/draw/js
+    logging:
+      driver: fluentd
+      options:
+        tag: docker.business.drawio
+        fluentd-async-connect: "true"
     deploy:
       labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.drawio.rule=Host(`drawio.${DOMAIN_SWARM}`,`drawio.${DOMAIN_EMERGENCY}`)"
-        - "traefik.http.routers.drawio.entrypoints=websecure"
-        - "traefik.http.routers.drawio.service=drawio"
-        - "traefik.http.routers.drawio.middlewares=auth,normal-chain@file"
-        - "traefik.http.services.drawio.loadbalancer.server.port=8080"
+        - traefik.enable=true
+        - traefik.http.routers.drawio.rule=Host(`drawio.${DOMAIN_SWARM}`,`drawio.${DOMAIN_EMERGENCY}`)
+        - traefik.http.routers.drawio.entrypoints=websecure
+        - traefik.http.routers.drawio.service=drawio
+        - traefik.http.routers.drawio.middlewares=auth,normal-chain@file
+        - traefik.http.services.drawio.loadbalancer.server.port=8080
         - homepage.group=Application
         - homepage.name=Draw.io
         - homepage.icon=diagrams-net.png
@@ -107,90 +127,31 @@ services:
         - homepage.description=Draw.io绘图
         - homepage.siteMonitor=http://drawio:8080
         - homepage.weight=12
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.labels.type == vm
-          - node.labels.application == true          
+      <<: [*deploy-common-ref,*placement-default-ref]
 
-  # flame:
-  #   image: pawelmalak/flame
-  #   networks: [network_cluster]
-  #   restart: on-failure    
-  #   environment:
-  #     PASSWORD: ${FLAME_PASSWORD}
-  #     TZ: ${TZ}   
-  #   volumes:
-  #     - nfs_flame_data:/app/data
-  #   deploy:      
-  #     labels:
-  #       - "traefik.enable=true"
-  #       - "traefik.http.routers.flame.rule=Host(`work.${DOMAIN_SWARM}`)"
-  #       - "traefik.http.routers.flame.entrypoints=websecure"
-  #       - "traefik.http.routers.flame.service=flame"
-  #       - "traefik.http.routers.flame.middlewares=cors-headers@file,auth,normal-chain@file"
-  #       - "traefik.http.services.flame.loadbalancer.server.port=5005"
-  #       - homepage.group=Application
-  #       - homepage.name=Work StartPage
-  #       - homepage.icon=hyperion.png
-  #       - homepage.href=https://work.${DOMAIN_SWARM}:${EXTERNAL_PORT}/
-  #       - homepage.description=Work StartPage
-  #       - homepage.siteMonitor=http://flame:5005
-  #       - homepage.weight=31
-  #     mode: replicated
-  #     replicas: 1
-  #     placement:
-  #       constraints:
-  #         - node.labels.type == vm
-  #         - node.labels.application == true   
-
-  # dashmachine:
-  #   image: rmountjoy/dashmachine:latest
-  #   networks: [network_cluster]
-  #   restart: on-failure        
-  #   environment:
-  #     TZ: ${TZ} 
-  #   # volumes:
-  #   #   - /path/to/appdata/config:/config      
-  #   deploy:      
-  #     labels:
-  #       - "traefik.enable=true"
-  #       - "traefik.http.routers.dashmachine.rule=Host(`dashmachine.${DOMAIN_SWARM}`)"
-  #       - "traefik.http.routers.dashmachine.entrypoints=websecure"
-  #       - "traefik.http.routers.dashmachine.service=dashmachine"
-  #       - "traefik.http.routers.dashmachine.middlewares=cors-headers@file,auth,normal-chain@file"
-  #       - "traefik.http.services.dashmachine.loadbalancer.server.port=5000"
-  #       - homepage.group=Application
-  #       - homepage.name=dashmachine
-  #       - homepage.icon=hyperion.png
-  #       - homepage.href=https://dashmachine.${DOMAIN_SWARM}:${EXTERNAL_PORT}/
-  #       - homepage.description=dashmachine
-  #       - homepage.siteMonitor=http://dashmachine:5000
-  #       - homepage.weight=21
-  #     mode: replicated
-  #     replicas: 1
-  #     placement:
-  #       constraints:
-  #         - node.labels.type == vm
-  #         - node.labels.application == true  
-
+  # ------------------------------------------------------------
+  # Start Page业务导航页
+  # ------------------------------------------------------------
   startpage:
     image: loganmarchione/docker-php-startpage:latest
-    networks: [network_cluster]
-    restart: on-failure        
+    <<: *service-common-ref
     environment:
-      TZ: ${TZ} 
+      TZ: ${TZ}
     volumes:
-      - nfs_startpage:/var/www/html/user_includes    
-    deploy:      
+      - nfs_startpage:/var/www/html/user_includes
+    logging:
+      driver: fluentd
+      options:
+        tag: docker.business.startpage
+        fluentd-async-connect: "true"
+    deploy:
       labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.startpage.rule=Host(`startpage.${DOMAIN_SWARM}`,`startpage.${DOMAIN_EMERGENCY}`)"
-        - "traefik.http.routers.startpage.entrypoints=websecure"
-        - "traefik.http.routers.startpage.service=startpage"
-        - "traefik.http.routers.startpage.middlewares=auth,normal-chain@file"
-        - "traefik.http.services.startpage.loadbalancer.server.port=80"
+        - traefik.enable=true
+        - traefik.http.routers.startpage.rule=Host(`startpage.${DOMAIN_SWARM}`,`startpage.${DOMAIN_EMERGENCY}`)
+        - traefik.http.routers.startpage.entrypoints=websecure
+        - traefik.http.routers.startpage.service=startpage
+        - traefik.http.routers.startpage.middlewares=auth,normal-chain@file
+        - traefik.http.services.startpage.loadbalancer.server.port=80
         - homepage.group=Application
         - homepage.name=startpage
         - homepage.icon=hoobs.png
@@ -198,54 +159,33 @@ services:
         - homepage.description=startpage
         - homepage.siteMonitor=http://startpage
         - homepage.weight=30
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.labels.type == vm
-          - node.labels.application == true            
+      <<: [*deploy-common-ref,*placement-default-ref]
 
 
 networks:
   network_cluster:
     external: true
 
-x-common-keys-volume: &common-keys-volume
-  type: nfs
-  o: addr=${NFS_SERVER},rw,nfsvers=4
-
-x-common-media-main-volume: &common-media-main-volume
-  type: nfs
-  o: addr=${MEDIA_SERVER},rw,nfsvers=4
-
-x-common-media-ext-volume: &common-media-ext-volume
-  type: nfs
-  o: addr=${MEDIA_EXT_SERVER},rw,nfsvers=4
-
 volumes:
   # NFS
   nfs_nocobase:
     driver: local
     driver_opts:
-      <<: *common-keys-volume
+      <<: *driver-common-ref
       device: :${NFS_DEVICE}/application/business/nocobase/storage
   nfs_nocodb:
     driver: local
     driver_opts:
-      <<: *common-keys-volume
+      <<: *driver-common-ref
       device: :${NFS_DEVICE}/application/business/nocodb/data
   nfs_drawio:
     driver: local
     driver_opts:
-      <<: *common-keys-volume
-      device: :${NFS_DEVICE}/application/business/drawio/data            
-  # nfs_flame_data:
-  #   driver: local
-  #   driver_opts:
-  #     <<: *common-keys-volume
-  #     device: :${NFS_DEVICE}/application/business/flame/data     
+      <<: *driver-common-ref
+      device: :${NFS_DEVICE}/application/business/drawio/data
   nfs_startpage:
     driver: local
     driver_opts:
-      <<: *common-keys-volume
-      device: :${NFS_DEVICE}/application/business/startpage                  
+      <<: *driver-common-ref
+      device: :${NFS_DEVICE}/application/business/startpage
+...            
