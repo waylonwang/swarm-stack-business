@@ -34,7 +34,7 @@ services:
   nocobase:
     <<: *service-common-ref
     # image: nocobase/nocobase:0.21.0-alpha.16
-    image: nocobase/nocobase:main
+    image: registry.cloudvalley.site:4/nocobase/nocobase:main
     environment:
       <<: *env-common-ref
       DB_LOGGING: ${DB_LOGGING}
@@ -74,7 +74,7 @@ services:
   # ------------------------------------------------------------
   nocodb:
     <<: *service-common-ref
-    image: registry.cloudvalley.site:4/nocodb/nocodb:latest
+    image: nocodb/nocodb:latest
     environment:
       <<: *env-common-ref
       NC_DB: ${NC_DB}
