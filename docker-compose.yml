@@ -74,7 +74,7 @@ services:
   # ------------------------------------------------------------
   nocodb:
     <<: *service-common-ref
-    image: nocodb/nocodb:latest
+    image: registry.cloudvalley.site:4/nocodb/nocodb:latest
     environment:
       <<: *env-common-ref
       NC_DB: ${NC_DB}
