@@ -34,7 +34,7 @@ services:
   nocobase:
     <<: *service-common-ref
     # image: nocobase/nocobase:0.21.0-alpha.16
-    image: registry.cloudvalley.site:4/nocobase/nocobase:main
+    image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/nocobase/nocobase:main
     environment:
       <<: *env-common-ref
       DB_LOGGING: ${DB_LOGGING}
@@ -108,7 +108,7 @@ services:
   # ------------------------------------------------------------
   drawio:
     <<: *service-common-ref
-    image: jgraph/drawio:latest
+    image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/jgraph/drawio:latest
     environment:
       <<: *env-common-ref
     volumes:
