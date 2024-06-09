@@ -62,7 +62,7 @@ services:
         - traefik.http.services.nocobase.loadbalancer.server.port=80
         - homepage.group=Application
         - homepage.name=云谷之家
-        - homepage.icon=https://www.waylon.wang:4/images/services/nocobase.png
+        - homepage.icon=https://www.${DOMAIN_NAS}:${EXTERNAL_PORT}/images/services/nocobase.png
         - homepage.href=https://nocobase.${DOMAIN_SWARM}:${EXTERNAL_PORT}/
         - homepage.description=NocoBase低代码系统
         - homepage.siteMonitor=http://nocobase
@@ -96,7 +96,7 @@ services:
         - traefik.http.services.nocodb.loadbalancer.server.port=8080
         - homepage.group=Application
         - homepage.name=NocoDB
-        - homepage.icon=https://www.waylon.wang:4/images/services/nocodb.png
+        - homepage.icon=https://www.${DOMAIN_NAS}:${EXTERNAL_PORT}/images/services/nocodb.png
         - homepage.href=https://nocodb.${DOMAIN_SWARM}:${EXTERNAL_PORT}/dashboard
         - homepage.description=NocoDB多维表格
         - homepage.siteMonitor=http://nocodb:8080
