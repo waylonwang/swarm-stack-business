@@ -169,6 +169,37 @@ services:
         - homepage.weight=30
       <<: [*deploy-common-ref, *placement-default-ref]
 
+  # ------------------------------------------------------------
+  # Memos笔记
+  # ------------------------------------------------------------
+  memos:
+    <<: *service-common-ref
+    image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/neosmemo/memos:0.22.2
+    environment:
+      <<: *env-common-ref
+    volumes:
+      - nfs_memos:/var/opt/memos
+    logging:
+      driver: fluentd
+      options:
+        tag: docker.business.memos
+        fluentd-async-connect: "true"
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.memos.rule=Host(`memos.${DOMAIN_SWARM}`,`memos.${DOMAIN_EMERGENCY}`)
+        - traefik.http.routers.memos.entrypoints=websecure
+        - traefik.http.routers.memos.service=memos
+        - traefik.http.routers.memos.middlewares=auth,normal-chain@file
+        - traefik.http.services.memos.loadbalancer.server.port=5230
+        - homepage.group=Application
+        - homepage.name=Memos
+        - homepage.icon=memos.png
+        - homepage.href=https://memos.${DOMAIN_SWARM}:${EXTERNAL_PORT}/
+        - homepage.description=memos
+        - homepage.siteMonitor=http://memos:5230
+        - homepage.weight=30
+      <<: [*deploy-common-ref, *placement-default-ref]
 
 networks:
   network_cluster:
@@ -196,4 +227,9 @@ volumes:
     driver_opts:
       <<: *driver-common-ref
       device: :${NFS_DEVICE}/application/business/startpage
+  nfs_memos:
+    driver: local
+    driver_opts:
+      <<: *driver-common-ref
+      device: :${NFS_DEVICE}/application/business/memos
 ...            
