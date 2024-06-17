@@ -201,6 +201,48 @@ services:
         - homepage.weight=42
       <<: [*deploy-common-ref, *placement-default-ref]
 
+  # ------------------------------------------------------------
+  # AFFiNE笔记
+  # ------------------------------------------------------------
+  affine:
+    <<: *service-common-ref
+    image: ghcr.nju.edu.cn/toeverything/affine-graphql:stable
+    command:
+      ['sh', '-c', 'node ./scripts/self-host-predeploy && node ./dist/index.js']    
+    environment:
+      <<: *env-common-ref
+      NODE_OPTIONS: --import=./scripts/register.js
+      AFFINE_CONFIG_PATH: /root/.affine/config
+      REDIS_SERVER_HOST: redis
+      DATABASE_URL: ${AFFINE_DATABASE_URL}
+      NODE_ENV: production
+      AFFINE_ADMIN_EMAIL: ${AFFINE_ADMIN_EMAIL}
+      AFFINE_ADMIN_PASSWORD: ${AFFINE_ADMIN_PASSWORD}      
+    volumes:
+      - nfs_affine_conf:/root/.affine/config
+      - nfs_affine_data:/root/.affine/storage
+    logging:
+      driver: fluentd
+      options:
+        tag: docker.business.affine
+        fluentd-async-connect: "true"
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.affine.rule=Host(`affine.${DOMAIN_SWARM}`,`affine.${DOMAIN_EMERGENCY}`)
+        - traefik.http.routers.affine.entrypoints=websecure
+        - traefik.http.routers.affine.service=affine
+        - traefik.http.routers.affine.middlewares=auth,normal-chain@file
+        - traefik.http.services.affine.loadbalancer.server.port=3010
+        - homepage.group=Application
+        - homepage.name=AFFiNE
+        - homepage.icon=affine.png
+        - homepage.href=https://affine.${DOMAIN_SWARM}:${EXTERNAL_PORT}/
+        - homepage.description=AFFiNE笔记
+        - homepage.siteMonitor=http://affine:3010
+        - homepage.weight=42
+      <<: [*deploy-common-ref, *placement-default-ref]      
+
 networks:
   network_cluster:
     external: true
@@ -232,4 +274,14 @@ volumes:
     driver_opts:
       <<: *driver-common-ref
       device: :${NFS_DEVICE}/application/business/memos
+  nfs_affine_conf:
+    driver: local
+    driver_opts:
+      <<: *driver-common-ref
+      device: :${NFS_DEVICE}/application/business/affine/conf
+  nfs_affine_data:
+    driver: local
+    driver_opts:
+      <<: *driver-common-ref
+      device: :${NFS_DEVICE}/application/business/affine/data            
 ...            
