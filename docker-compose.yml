@@ -174,7 +174,7 @@ services:
   # ------------------------------------------------------------
   memos:
     <<: *service-common-ref
-    image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/neosmemo/memos:0.21
+    image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/neosmemo/memos:0.22.2
     environment:
       <<: *env-common-ref
     volumes:
