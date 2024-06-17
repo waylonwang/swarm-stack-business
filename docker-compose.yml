@@ -36,6 +36,7 @@ services:
   nocobase:
     <<: *service-common-ref
     # image: nocobase/nocobase:0.21.0-alpha.16
+    # image-ref: /nocobase/nocobase:main
     image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/nocobase/nocobase:main
     environment:
       <<: *env-common-ref
@@ -76,6 +77,7 @@ services:
   # ------------------------------------------------------------
   nocodb:
     <<: *service-common-ref
+    # image-ref: nocodb/nocodb:0.207.3
     image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/nocodb/nocodb:0.207.3
     environment:
       <<: *env-common-ref
@@ -110,6 +112,7 @@ services:
   # ------------------------------------------------------------
   drawio:
     <<: *service-common-ref
+    # image-ref: jgraph/drawio:24.5.2
     image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/jgraph/drawio:24.5.2
     environment:
       <<: *env-common-ref
@@ -142,6 +145,7 @@ services:
   # ------------------------------------------------------------
   startpage:
     <<: *service-common-ref
+    # image-ref: loganmarchione/docker-php-startpage:0.6.9
     image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/loganmarchione/docker-php-startpage:0.6.9
     environment:
       <<: *env-common-ref
@@ -174,6 +178,7 @@ services:
   # ------------------------------------------------------------
   memos:
     <<: *service-common-ref
+    # image-ref: neosmemo/memos:0.22.2
     image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/neosmemo/memos:0.22.2
     environment:
       <<: *env-common-ref
@@ -206,7 +211,8 @@ services:
   # ------------------------------------------------------------
   affine:
     <<: *service-common-ref
-    image: ghcr.nju.edu.cn/toeverything/affine-graphql:stable
+    # image-ref: ghcr.nju.edu.cn/toeverything/affine-graphql:stable
+    image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/toeverything/affine-graphql:stable
     command:
       ['sh', '-c', 'node ./scripts/self-host-predeploy && node ./dist/index.js']    
     environment:
