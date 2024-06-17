@@ -170,7 +170,7 @@ services:
       <<: [*deploy-common-ref, *placement-default-ref]
 
   # ------------------------------------------------------------
-  # Memos笔记
+  # Memos备忘录
   # ------------------------------------------------------------
   memos:
     <<: *service-common-ref
@@ -196,9 +196,9 @@ services:
         - homepage.name=Memos
         - homepage.icon=memos.png
         - homepage.href=https://memos.${DOMAIN_SWARM}:${EXTERNAL_PORT}/
-        - homepage.description=memos
+        - homepage.description=Memos备忘录
         - homepage.siteMonitor=http://memos:5230
-        - homepage.weight=30
+        - homepage.weight=42
       <<: [*deploy-common-ref, *placement-default-ref]
 
 networks:
