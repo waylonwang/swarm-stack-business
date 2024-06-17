@@ -36,7 +36,7 @@ services:
   nocobase:
     <<: *service-common-ref
     # image: nocobase/nocobase:0.21.0-alpha.16
-    # image-ref: /nocobase/nocobase:main
+    # image-ref: nocobase/nocobase:main
     image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/nocobase/nocobase:main
     environment:
       <<: *env-common-ref
