@@ -211,7 +211,7 @@ services:
   # ------------------------------------------------------------
   affine:
     <<: *service-common-ref
-    # image-ref: ghcr.nju.edu.cn/toeverything/affine-graphql:stable
+    # image-ref: ghcr.io/toeverything/affine-graphql:stable
     image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/toeverything/affine-graphql:stable
     command:
       ['sh', '-c', 'node ./scripts/self-host-predeploy && node ./dist/index.js']    
