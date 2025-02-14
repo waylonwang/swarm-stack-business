@@ -297,11 +297,11 @@ services:
       start_period: 90s
     environment:
       <<: *env-common-ref
-      DB_HOST: ${DB_HOST:-mysql}
-      DB_PORT: ${DB_PORT:-3306}
-      DB_NAME: ${DB_NAME:-dataease}
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-nu4x599Wq7u0Bn8EABh3J91G}      
+      DB_HOST: POSTGRES_DB
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}      
     volumes:
       - nfs_dataease_data:/opt/dataease2.0/data
       - nfs_dataease_geo:/opt/dataease2.0/data/geo
