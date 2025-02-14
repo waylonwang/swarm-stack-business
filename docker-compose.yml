@@ -249,6 +249,85 @@ services:
         - homepage.weight=42
       <<: [*deploy-common-ref, *placement-default-ref]      
 
+  # ------------------------------------------------------------
+  # Qinglong青龙面板
+  # ------------------------------------------------------------
+  # qinglong:
+  #   <<: *service-common-ref
+  #   # image-ref: neosmemo/memos:0.22.2
+  #   image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/whyour/qinglong:latest
+  #   environment:
+  #     <<: *env-common-ref
+  #   volumes:
+  #     - nfs_qinglong:/ql/data
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       tag: docker.business.qinglong
+  #       fluentd-async-connect: "true"
+  #   deploy:
+  #     labels:
+  #       - traefik.enable=true
+  #       - traefik.http.routers.qinglong.rule=Host(`qinglong.${DOMAIN_SWARM}`,`qinglong.${DOMAIN_EMERGENCY}`)
+  #       - traefik.http.routers.qinglong.entrypoints=websecure
+  #       - traefik.http.routers.qinglong.service=qinglong
+  #       - traefik.http.routers.qinglong.middlewares=normal-chain@file
+  #       - traefik.http.services.qinglong.loadbalancer.server.port=5700
+  #       - homepage.group=Application
+  #       - homepage.name=Memos
+  #       - homepage.icon=qinglong.png
+  #       - homepage.href=https://qinglong.${DOMAIN_SWARM}:${EXTERNAL_PORT}/
+  #       - homepage.description=Qinglong青龙面板
+  #       - homepage.siteMonitor=http://qinglong:5700
+  #       - homepage.weight=43
+  #     <<: [*deploy-common-ref, *placement-default-ref]
+
+  # ------------------------------------------------------------
+  # DataEase BI
+  # ------------------------------------------------------------
+  dataease:
+    <<: *service-common-ref
+    # image-ref: wojiushixiaobai/dataease:v2.10.5
+    image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/wojiushixiaobai/dataease:v2.10.5
+    healthcheck:
+      test: "check http://localhost:8100"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    environment:
+      <<: *env-common-ref
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_NAME: ${DB_NAME:-dataease}
+      DB_USER: ${DB_USER:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-nu4x599Wq7u0Bn8EABh3J91G}      
+    volumes:
+      - nfs_dataease_data:/opt/dataease2.0/data
+      - nfs_dataease_geo:/opt/dataease2.0/data/geo
+    logging:
+      driver: fluentd
+      options:
+        tag: docker.business.dataease
+        fluentd-async-connect: "true"
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.dataease.rule=Host(`dataease.${DOMAIN_SWARM}`,`dataease.${DOMAIN_EMERGENCY}`)
+        - traefik.http.routers.dataease.entrypoints=websecure
+        - traefik.http.routers.dataease.service=dataease
+        - traefik.http.routers.dataease.middlewares=normal-chain@file
+        - traefik.http.services.dataease.loadbalancer.server.port=8100
+        - homepage.group=Application
+        - homepage.name=DataEase
+        - homepage.icon=dataease.png
+        - homepage.href=https://dataease.${DOMAIN_SWARM}:${EXTERNAL_PORT}/
+        - homepage.description=DataEase BI
+        - homepage.siteMonitor=http://dataease:8100
+        - homepage.weight=44
+      <<: [*deploy-common-ref, *placement-default-ref]  
+
+
 networks:
   network_cluster:
     external: true
@@ -280,6 +359,11 @@ volumes:
     driver_opts:
       <<: *driver-common-ref
       device: :${NFS_DEVICE}/application/business/memos
+  nfs_qinglong:
+    driver: local
+    driver_opts:
+      <<: *driver-common-ref
+      device: :${NFS_DEVICE}/application/business/qinglong      
   nfs_affine_conf:
     driver: local
     driver_opts:
@@ -289,5 +373,15 @@ volumes:
     driver: local
     driver_opts:
       <<: *driver-common-ref
-      device: :${NFS_DEVICE}/application/business/affine/data            
+      device: :${NFS_DEVICE}/application/business/affine/data   
+  nfs_dataease_data:
+    driver: local
+    driver_opts:
+      <<: *driver-common-ref
+      device: :${NFS_DEVICE}/application/business/dataease/data  
+  nfs_dataease_geo:
+    driver: local
+    driver_opts:
+      <<: *driver-common-ref
+      device: :${NFS_DEVICE}/application/business/dataease/geo              
 ...            
