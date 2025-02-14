@@ -297,7 +297,7 @@ services:
       start_period: 90s
     environment:
       <<: *env-common-ref
-      DB_HOST: POSTGRES_DB
+      DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${POSTGRES_DB}
       DB_USER: ${POSTGRES_USER}
