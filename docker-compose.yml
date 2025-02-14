@@ -289,12 +289,12 @@ services:
     <<: *service-common-ref
     # image-ref: wojiushixiaobai/dataease:v2.10.5
     image: registry.${DOMAIN_SWARM}:${EXTERNAL_PORT}/wojiushixiaobai/dataease:v2.10.5
-    healthcheck:
-      test: "check http://localhost:8100"
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 90s
+    # healthcheck:
+    #   test: "check http://localhost:8100"
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 90s
     environment:
       <<: *env-common-ref
       DB_HOST: postgres
