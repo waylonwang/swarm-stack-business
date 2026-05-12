@@ -50,11 +50,11 @@ services:
       LOCAL_STORAGE_BASE_URL: ${LOCAL_STORAGE_BASE_URL}
     volumes:
       - nfs_nocobase:/app/nocobase/storage
-    logging:
-      driver: fluentd
-      options:
-        tag: docker.business.nocobase
-        fluentd-async-connect: "true"
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     tag: docker.business.nocobase
+    #     fluentd-async-connect: "true"
     deploy:
       labels:
         - traefik.enable=true
@@ -85,11 +85,11 @@ services:
       NC_PUBLIC_URL: https://nocodb.${DOMAIN_SWARM}:${EXTERNAL_PORT}
     volumes:
       - nfs_nocodb:/usr/app/data
-    logging:
-      driver: fluentd
-      options:
-        tag: docker.business.nocodb
-        fluentd-async-connect: "true"
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     tag: docker.business.nocodb
+    #     fluentd-async-connect: "true"
     deploy:
       labels:
         - traefik.enable=true
@@ -118,11 +118,11 @@ services:
       <<: *env-common-ref
     volumes:
       - nfs_drawio:/usr/local/tomcat/webapps/draw/js
-    logging:
-      driver: fluentd
-      options:
-        tag: docker.business.drawio
-        fluentd-async-connect: "true"
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     tag: docker.business.drawio
+    #     fluentd-async-connect: "true"
     deploy:
       labels:
         - traefik.enable=true
@@ -151,11 +151,11 @@ services:
       <<: *env-common-ref
     volumes:
       - nfs_startpage:/var/www/html/user_includes
-    logging:
-      driver: fluentd
-      options:
-        tag: docker.business.startpage
-        fluentd-async-connect: "true"
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     tag: docker.business.startpage
+    #     fluentd-async-connect: "true"
     deploy:
       labels:
         - traefik.enable=true
@@ -184,11 +184,11 @@ services:
       <<: *env-common-ref
     volumes:
       - nfs_memos:/var/opt/memos
-    logging:
-      driver: fluentd
-      options:
-        tag: docker.business.memos
-        fluentd-async-connect: "true"
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     tag: docker.business.memos
+    #     fluentd-async-connect: "true"
     deploy:
       labels:
         - traefik.enable=true
@@ -227,11 +227,11 @@ services:
     volumes:
       - nfs_affine_conf:/root/.affine/config
       - nfs_affine_data:/root/.affine/storage
-    logging:
-      driver: fluentd
-      options:
-        tag: docker.business.affine
-        fluentd-async-connect: "true"
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     tag: docker.business.affine
+    #     fluentd-async-connect: "true"
     deploy:
       labels:
         - traefik.enable=true
@@ -305,11 +305,11 @@ services:
     volumes:
       - nfs_dataease_data:/opt/dataease2.0/data
       - nfs_dataease_geo:/opt/dataease2.0/data/geo
-    logging:
-      driver: fluentd
-      options:
-        tag: docker.business.dataease
-        fluentd-async-connect: "true"
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     tag: docker.business.dataease
+    #     fluentd-async-connect: "true"
     deploy:
       labels:
         - traefik.enable=true
